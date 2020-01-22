@@ -1,0 +1,11 @@
+- name: install epel repo 
+  yum:
+    name: epel-release
+    state: latest
+  when: ansible_os_family == "RedHat"
+
+- name: install nrpe 
+  yum:
+    name: nrpe
+    state: latest
+  when: ansible_os_family == "RedHat"

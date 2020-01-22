@@ -1,0 +1,9 @@
+- name: Install NRPE
+  hosts: all
+  roles:
+    - { role: debian_install, when: ansible_os_family == "Debian" }
+    - { role: centos_install, when: ansible_os_family == "RedHat" }
+    - { role: suse_install, when: ansible_os_family == "Suse" }
+    - { role: freebsd_install, when: ansible_os_family == "FreeBSD" } 
+    - { role: windows_install, when: ansible_os_family == "Windows" }
+    - { role: nrpe_config_unix }

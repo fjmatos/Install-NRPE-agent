@@ -1,0 +1,14 @@
+- name: install NRPE SLES 11 
+  zypper:
+    name: nagios-nrpe
+    state: latest
+  when:
+    - ansible_distribution_major_version == '11'
+
+
+- name: install NRPE SLES 12 
+  zypper:
+    name: nrpe
+    state: latest
+  when:
+    - ansible_distribution_major_version == '12'

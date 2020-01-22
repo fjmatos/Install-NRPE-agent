@@ -1,0 +1,4 @@
+- name:  freebsd | Install NRPE
+  pkgng:
+    name: nrpe3
+    state: present

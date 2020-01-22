@@ -1,0 +1,72 @@
+- lineinfile:
+    path: /etc/nagios/nrpe.cfg
+    regexp: '^allowed_hosts=127.0.0.1\s'
+    line: 'allowed_hosts=127.0.0.1,{{ add_node_nagios }}'
+  when:
+    - ansible_os_family != 'FreeBSD' and ansible_os_family == "Debian"
+    
+- lineinfile:
+    path: /etc/nagios/nrpe.cfg
+    regexp: '^allowed_hosts=127.0.0.1,::1\s'
+    line: 'allowed_hosts=127.0.0.1,{{ add_node_nagios }}'
+  when:
+    - ansible_os_family != 'FreeBSD' and ansible_os_family == "RedHat"
+
+- lineinfile:
+    path: /etc/nrpe.cfg
+    regexp: '^allowed_hosts=127.0.0.1\s'
+    line: 'allowed_hosts=127.0.0.1,{{ add_node_nagios }}'
+  when:
+    - ansible_os_family != 'FreeBSD' and ansible_os_family == "Suse"
+
+- lineinfile:
+    path: /usr/local/etc/nrpe.cfg
+    regexp: '^allowed_hosts=127.0.0.1\s'
+    line: 'allowed_hosts=127.0.0.1,{{ add_node_nagios }}'
+  when:
+    - ansible_os_family == 'FreeBSD'
+
+
+- name: Redhat and Suse | enable NRPE
+  systemd:
+    name: nrpe
+    enabled: yes
+    masked: no
+  when:
+    - ansible_os_family == 'RedHat' and ansible_os_family == "Suse"
+    
+- name: Debian | enable NRPE
+  systemd:
+    name: nagios-nrpe-server.service
+    enabled: yes
+    masked: no
+  when:
+    - ansible_os_family == 'Debian'
+
+- name: FreeBSD | Add line in /etc/rc.conf
+  shell: echo 'nrpe3_enable="YES"' >> /etc/rc.conf
+  args: 
+    executable: /bin/sh
+  when:
+    - ansible_os_family == 'FreeBSD'
+
+- name: Debian | Restart service nagios-nrpe-server.service
+  service:
+    name: nagios-nrpe-server.service
+    state: restarted
+  when:
+    - ansible_os_family == 'Debian'
+    
+- name: Redhat and Suse | Restart service nrpe
+  service:
+    name: nrpe
+    state: restarted
+  when:
+    - ansible_os_family == 'RedHat' and ansible_os_family == "Suse"
+
+- name: FreeBSD | Restart service nrpe3
+  service:
+    name: nrpe3
+    state: restarted
+  when:
+    - ansible_os_family == 'FreeBSD'
